@@ -16,7 +16,8 @@
     'license': 'AGPL-3',
     # import data to module (csv, xml....)
     'data': [
-        'data/real_estate.property.csv'
-        #'data/real_estate_country_data.xml'
+        'data/real_estate.property.csv',
+        # security
+        'security/ir.model.access.csv'
     ]
 }
