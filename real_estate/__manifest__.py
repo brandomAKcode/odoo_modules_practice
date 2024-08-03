@@ -13,5 +13,10 @@
     'application': True,
     'category': 'Modules Practice/Real Estate',
     'installable': True,
-    'license': 'AGPL-3'
+    'license': 'AGPL-3',
+    # import data to module (csv, xml....)
+    'data': [
+        'data/real_estate.property.csv'
+        #'data/real_estate_country_data.xml'
+    ]
 }
