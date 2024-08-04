@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+<odoo>
+    <!-- This connect actiosn with model -->
+    <record id="real_estate_property_action" model="ir.actions.act_window">
+        <field name="name">Properties</field>
+        <field name="res_model">real_estate.property</field>
+        <field name="view_mode">tree</field>
+    </record>
+
+    <!-- This menu show in top bar, menu connect action and action to model -->
+    <menuitem id="real_estate_property_menu" name="Real Estate">
+        <menuitem id="real_estate_first_level_menu" name="First Level">
+            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action"/>
+        </menuitem>
+    </menuitem>
+</odoo>

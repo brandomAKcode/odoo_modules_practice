@@ -18,6 +18,8 @@
     'data': [
         'data/real_estate.property.csv',
         # security
-        'security/ir.model.access.csv'
+        'security/ir.model.access.csv',
+        # views
+        'views/real_estate_property_views.xml',
     ]
 }
