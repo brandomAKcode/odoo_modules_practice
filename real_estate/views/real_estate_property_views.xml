@@ -1,5 +1,12 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
+    <!-- This menu show in top bar, menu connect action and action to model -->
+    <menuitem id="real_estate_property_menu" name="Real Estate">
+        <menuitem id="real_estate_first_level_menu" name="First Level">
+            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action"/>
+        </menuitem>
+    </menuitem>
+    
     <!-- This connect actiosn with model -->
     <record id="real_estate_property_action" model="ir.actions.act_window">
         <field name="name">Properties</field>
@@ -7,10 +14,20 @@
         <field name="view_mode">tree</field>
     </record>
 
-    <!-- This menu show in top bar, menu connect action and action to model -->
-    <menuitem id="real_estate_property_menu" name="Real Estate">
-        <menuitem id="real_estate_first_level_menu" name="First Level">
-            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action"/>
-        </menuitem>
-    </menuitem>
+    <!-- Custom tree view -->
+    <record id="real_estate_view_tree" model="ir.ui.view">
+        <field name="name">real_estate.property.tree</field>
+        <field name="model">real_estate.property</field>
+        <field name="arch" type="xml">
+            <tree string="List of Properties" editable="bottom">
+                <field name="name" string="Property"/>
+                <field name="postcode" string="Postcode" />
+                <field name="bedrooms" string="Bedrooms" />
+                <field name="living_area" string="Living Area" />
+                <field name="expected_price" string="Price" />
+                <field name="garage" string="Garage" widget="boolean" />
+                <field name="garden" string="Garden" />
+            </tree>
+        </field>
+    </record>
 </odoo>
