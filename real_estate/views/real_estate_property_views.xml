@@ -3,7 +3,7 @@
     <!-- This menu show in top bar, menu connect action and action to model -->
     <menuitem id="real_estate_property_menu" name="Real Estate">
         <menuitem id="real_estate_first_level_menu" name="First Level">
-            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action"/>
+            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action" />
         </menuitem>
     </menuitem>
     
@@ -11,16 +11,29 @@
     <record id="real_estate_property_action" model="ir.actions.act_window">
         <field name="name">Properties</field>
         <field name="res_model">real_estate.property</field>
-        <field name="view_mode">tree</field>
+        <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- Custom search -->
+    <record id="view_delivery_carrier_search" model="ir.ui.view">
+        <field name="name">real_estate.property.search</field>
+        <field name="model">real_estate.property</field>
+        <field name="arch" type="xml">
+            <search string="Delivery Carrier">
+                <field name="name" string="Property" />
+                <field name="postcode" string="Postcode" />
+                <filter string="barato" name="inactive" domain="[('expected_price', '&lt;', 101)]"/>
+            </search>
+        </field>
+    </record>
+    
     <!-- Custom tree view -->
     <record id="real_estate_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.tree</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
-            <tree string="List of Properties" editable="bottom">
-                <field name="name" string="Property"/>
+            <tree string="List of Properties">
+                <field name="name" string="Property" />
                 <field name="postcode" string="Postcode" />
                 <field name="bedrooms" string="Bedrooms" />
                 <field name="living_area" string="Living Area" />
@@ -28,6 +41,48 @@
                 <field name="garage" string="Garage" widget="boolean" />
                 <field name="garden" string="Garden" />
             </tree>
+        </field>
+    </record>
+    
+    <!-- custom Form -->
+    <record id="real_estate_view_form" model="ir.ui.view">
+        <field name="name">real_estate.property.form</field>
+        <field name="model">real_estate.property</field>
+        <field name="arch" type="xml">
+            <form string="Property">
+                <sheet>
+                    <group>
+                        <h2>
+                            <field name="name" />
+                        </h2>
+                    </group>
+                    <group>
+                        <group>
+                            <field name="postcode" string="Postcode" />
+                            <field name="date_availability" string="Available From" />
+                        </group>
+                        <group>
+                            <field name="expected_price" string="Expected Price" />
+                            <field name="selling_price" string="Selling Price" />
+                        </group>
+                    </group>
+                    <!-- Tab -->
+                    <notebook>
+                        <page string="Description">
+                            <group>
+                                <field name="description" string="Description" />
+                                <field name="bedrooms" string="Bedrooms" />
+                                <field name="living_area" string="Living Area" />
+                                <field name="facades" string="Facades" />
+                                <field name="garage" string="Garage" widget="boolean"/>
+                                <field name="garden" string="Garden" widget="boolean"/>
+                                <field name="garden_area" string="Garden Area" />
+                                <field name="garden_orientation" string="Garden Orientation" />
+                            </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
         </field>
     </record>
 </odoo>
