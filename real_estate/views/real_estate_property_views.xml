@@ -1,18 +1,53 @@
 <?xml version='1.0' encoding='utf-8'?>
 <odoo>
-    <!-- This menu show in top bar, menu connect action and action to model -->
-    <menuitem id="real_estate_property_menu" name="Real Estate">
-        <menuitem id="real_estate_first_level_menu" name="First Level">
-            <menuitem id="real_estate_model_menu_action" action="real_estate_property_action" />
-        </menuitem>
-    </menuitem>
-    
-    <!-- This connect actiosn with model -->
+    <!-- Action to real_estate.property -->
     <record id="real_estate_property_action" model="ir.actions.act_window">
         <field name="name">Properties</field>
         <field name="res_model">real_estate.property</field>
         <field name="view_mode">tree,form</field>
     </record>
+
+    <!-- Action to real_estate.property.type -->
+    <record id="real_estate_property_type_action" model="ir.actions.act_window">
+        <field name="name">Property Types</field>
+        <field name="res_model">real_estate.property.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action to real_estate.property.tag -->
+    <record id="real_estate_property_tag_action" model="ir.actions.act_window">
+        <field name="name">Property Tags</field>
+        <field name="res_model">real_estate.property.tag</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action to real_estate.property.offer -->
+    <record id="real_estate_property_offer_action" model="ir.actions.act_window">
+        <field name="name">Property Offers</field>
+        <field name="res_model">real_estate.property.offer</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Action to res.partner -->
+    <record id="res_partner_action" model="ir.actions.act_window">
+        <field name="name">Partners</field>
+        <field name="res_model">res.partner</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- This menu show in top bar, menu connect action and action to model -->
+    <menuitem id="real_estate_property_menu" name="Real Estate">
+        <menuitem id="real_estate_property_first_level_menu" name="Properties">
+            <menuitem id="real_estate_property_menu_action" action="real_estate_property_action" name="Property List" />
+        </menuitem>
+
+        <menuitem id="real_estate_property_type_first_level_menu" name="Settings">
+            <menuitem id="real_estate_property_type_menu_action" action="real_estate_property_type_action" />
+            <menuitem id="real_estate_property_tag_menu_action" action="real_estate_property_tag_action" />
+            <menuitem id="real_estate_property_offer_menu_action" action="real_estate_property_offer_action" />
+            <menuitem id="res_partner_menu_action" action="res_partner_action" name="Client List"/>
+        </menuitem>
+    </menuitem>
 
     <!-- Custom search -->
     <record id="view_delivery_carrier_search" model="ir.ui.view">
@@ -22,24 +57,39 @@
             <search string="Delivery Carrier">
                 <field name="name" string="Property" />
                 <field name="postcode" string="Postcode" />
-                <filter string="barato" name="inactive" domain="[('expected_price', '&lt;', 101)]"/>
+                <filter string="Low price" name="inactive" domain="[('expected_price', '&lt;', 101)]"/>
             </search>
         </field>
     </record>
     
-    <!-- Custom tree view -->
+    <!-- Custom tree view real_estate.property -->
     <record id="real_estate_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.tree</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
             <tree string="List of Properties">
                 <field name="name" string="Property" />
+                <field name="type_id" string="Type" />
                 <field name="postcode" string="Postcode" />
                 <field name="bedrooms" string="Bedrooms" />
                 <field name="living_area" string="Living Area" />
                 <field name="expected_price" string="Price" />
                 <field name="garage" string="Garage" widget="boolean" />
                 <field name="garden" string="Garden" />
+            </tree>
+        </field>
+    </record>
+
+    <!-- Custom tree view real_estate.property -->
+    <record id="real_estate_property_offer_view_tree" model="ir.ui.view">
+        <field name="name">real_estate.property.offer.tree</field>
+        <field name="model">real_estate.property.offer</field>
+        <field name="arch" type="xml">
+            <tree string="List of Properties">
+                <field name="property_id" string="Property" />
+                <field name="price" string="Price" />
+                <field name="status" string="Status" />
+                <field name="buyer_id" string="Buyer" />
             </tree>
         </field>
     </record>
@@ -51,13 +101,15 @@
         <field name="arch" type="xml">
             <form string="Property">
                 <sheet>
+                    <h1>
+                        <field name="name" nolabel="1"/>
+                    </h1>
                     <group>
-                        <h2>
-                            <field name="name" />
-                        </h2>
+                        <field name="tag_ids" widget="many2many_tags" string="Tags"/>
                     </group>
                     <group>
                         <group>
+                            <field name="type_id" string="Property Type" />
                             <field name="postcode" string="Postcode" />
                             <field name="date_availability" string="Available From" />
                         </group>
@@ -78,6 +130,17 @@
                                 <field name="garden" string="Garden" widget="boolean"/>
                                 <field name="garden_area" string="Garden Area" />
                                 <field name="garden_orientation" string="Garden Orientation" />
+                            </group>
+                        </page>
+
+                        <page string="Offers">
+                            <field name="offer_ids"/>
+                        </page>
+
+                        <page string="Other Info">
+                            <group>
+                                <field name="buyer_id" string="Buyer" />
+                                <field name="salesman_id" string="Salesman" />
                             </group>
                         </page>
                     </notebook>

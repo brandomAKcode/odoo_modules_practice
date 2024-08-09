@@ -4,16 +4,15 @@
     'summary': """
         This is the Real Estate Module
     """,
-
     'description': """
         Real Estate
     """,
-
     'version': '0.1',
     'application': True,
     'category': 'Modules Practice/Real Estate',
     'installable': True,
     'license': 'AGPL-3',
+    'depends': ['base'],
     # import data to module (csv, xml....)
     'data': [
         'data/real_estate.property.csv',
