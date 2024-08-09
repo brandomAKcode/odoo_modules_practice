@@ -13,3 +13,5 @@ This is a practice to learn the essential aspects of Odoo.
 #3 For some strange reason, in the ir.module.access.csv file, all values must be without spaces. This way, Odoo will not generate errors when importing security files.
 
 #4 Odoo provides the flexibility to customize views through XML files. These XML files enable us to incorporate search functionalities, such as search bars, into the user interface.
+
+#5 When creating a one2many field, a many2one field must be created in the related model to ensure a correct relationship.
