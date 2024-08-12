@@ -1,6 +1,6 @@
 from odoo import fields, models, api
 from datetime import datetime, timedelta
-from odoo.exceptions import UserError
+from odoo.exceptions import UserError, ValidationError
 
 
 class EstateProperty(models.Model):
@@ -39,6 +39,11 @@ class EstateProperty(models.Model):
     # computed field
     total_area = fields.Float(compute="_compute_total_area")
     best_offer = fields.Float(compute="_compute_best_offer")
+
+    _sql_constraints = [
+        ('check_selling_price', 'CHECK(selling_price >= 0)', 'The selling price cannot be less than 0.'),
+        ('check_expected_price', 'CHECK(expected_price >= 0)', 'The expected price cannot be less than 0.')
+    ]
 
     @api.depends('living_area', 'garden_area')
     def _compute_total_area(self):
@@ -99,6 +104,16 @@ class EstatePropertyOffer(models.Model):
     date_deadline = fields.Date(compute='_compute_date_deadline', inverse='_inverse_date_deadline', readonly=False)
     buyer_id = fields.Many2one(comodel_name='res.partner', ondelete='cascade')
     property_id = fields.Many2one(comodel_name='real_estate.property', ondelete='cascade')
+
+    _sql_constraints = [
+        ('check_price', 'CHECK(price >= 0)', 'The selling price cannot be less than 0.')
+    ]
+
+    @api.constrains('price')
+    def _check_price(self):
+        for record in self:
+            if record.price < (record.property_id.selling_price*0.90):
+                raise ValidationError('The price cannot be less than 90% of the published price.')
 
     @api.depends('validity')
     def _compute_date_deadline(self):
