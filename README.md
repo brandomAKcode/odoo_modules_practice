@@ -17,3 +17,5 @@ This is a practice to learn the essential aspects of Odoo.
 #5 When creating a one2many field, a many2one field must be created in the related model to ensure a correct relationship.
 
 #6 The compute and onchange decorators are powerful tools for manipulating data in the view.
+
+#7 SQL constraints are much faster than Python constraints.
