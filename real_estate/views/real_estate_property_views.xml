@@ -38,13 +38,13 @@
     <!-- This menu show in top bar, menu connect action and action to model -->
     <menuitem id="real_estate_property_menu" name="Real Estate">
         <menuitem id="real_estate_property_first_level_menu" name="Properties">
-            <menuitem id="real_estate_property_menu_action" action="real_estate_property_action" name="Property List" />
+            <menuitem id="real_estate_property_menu_action" action="real_estate_property_action" name="Property List"/>
         </menuitem>
 
         <menuitem id="real_estate_property_type_first_level_menu" name="Settings">
-            <menuitem id="real_estate_property_type_menu_action" action="real_estate_property_type_action" />
-            <menuitem id="real_estate_property_tag_menu_action" action="real_estate_property_tag_action" />
-            <menuitem id="real_estate_property_offer_menu_action" action="real_estate_property_offer_action" />
+            <menuitem id="real_estate_property_type_menu_action" action="real_estate_property_type_action"/>
+            <menuitem id="real_estate_property_tag_menu_action" action="real_estate_property_tag_action"/>
+            <menuitem id="real_estate_property_offer_menu_action" action="real_estate_property_offer_action"/>
             <menuitem id="res_partner_menu_action" action="res_partner_action" name="Client List"/>
         </menuitem>
     </menuitem>
@@ -55,54 +55,65 @@
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
             <search string="Delivery Carrier">
-                <field name="name" string="Property" />
-                <field name="postcode" string="Postcode" />
+                <field name="name" string="Property"/>
+                <field name="postcode" string="Postcode"/>
                 <filter string="Low price" name="inactive" domain="[('expected_price', '&lt;', 101)]"/>
             </search>
         </field>
     </record>
-    
+
     <!-- Custom tree view real_estate.property -->
     <record id="real_estate_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.tree</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
             <tree string="List of Properties">
-                <field name="name" string="Property" />
-                <field name="type_id" string="Type" />
-                <field name="postcode" string="Postcode" />
-                <field name="bedrooms" string="Bedrooms" />
-                <field name="living_area" string="Living Area" />
-                <field name="expected_price" string="Price" />
-                <field name="garage" string="Garage" widget="boolean" />
-                <field name="garden" string="Garden" />
+                <field name="name" string="Property"/>
+                <field name="type_id" string="Type"/>
+                <field name="postcode" string="Postcode"/>
+                <field name="bedrooms" string="Bedrooms"/>
+                <field name="living_area" string="Living Area"/>
+                <field name="expected_price" string="Price"/>
+                <field name="garage" string="Garage" widget="boolean"/>
+                <field name="garden" string="Garden"/>
             </tree>
         </field>
     </record>
 
-    <!-- Custom tree view real_estate.property -->
+    <!-- Custom tree view real_estate.property.offer -->
     <record id="real_estate_property_offer_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.offer.tree</field>
         <field name="model">real_estate.property.offer</field>
         <field name="arch" type="xml">
             <tree string="List of Properties">
-                <field name="property_id" string="Property" />
-                <field name="price" string="Price" />
-                <field name="validity" string="Validity" />
-                <field name="date_created" string="Date Created" />
-                <field name="date_deadline" string="Date Expired" />
-                <field name="status" string="Status" />
-                <field name="buyer_id" string="Buyer" />
+                <field name="property_id" string="Property"/>
+                <field name="price" string="Price"/>
+                <field name="validity" string="Validity"/>
+                <field name="date_created" string="Date Created"/>
+                <field name="date_deadline" string="Date Expired"/>
+                <field name="status" string="Status"/>
+                <button name="action_accept_offer" type="object" icon="fa-check" title="Accept"/>
+                <button name="action_refuse_offer" type="object" icon="fa-times" title="Refuse"/>
             </tree>
         </field>
     </record>
-    
-    <!-- custom Form -->
+
+    <!-- Property Form -->
     <record id="real_estate_view_form" model="ir.ui.view">
         <field name="name">real_estate.property.form</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
             <form string="Property">
+                <header>
+                    <button name="action_sold" type="object" class="btn-success">
+                        <i class="fa fa-handshake-o mx-2" aria-label="Sold"/>
+                        SOLD
+                    </button>
+                    <button name="action_canceled" type="object" class="btn-danger">
+                        <i class="fa fa-ban mx-2" aria-label="Canceled"/>
+                        CANCELED
+                    </button>
+                </header>
                 <sheet>
                     <h1>
                         <field name="name" nolabel="1"/>
@@ -112,29 +123,30 @@
                     </group>
                     <group>
                         <group>
-                            <field name="type_id" string="Property Type" />
-                            <field name="postcode" string="Postcode" />
-                            <field name="date_availability" string="Available From" />
+                            <field name="status" string="Status"/>
+                            <field name="type_id" string="Property Type"/>
+                            <field name="postcode" string="Postcode"/>
+                            <field name="date_availability" string="Available From"/>
                         </group>
                         <group>
-                            <field name="expected_price" string="Expected Price" />
-                            <field name="selling_price" string="Selling Price" />
-                            <field name="best_offer" string="Best Offer" />
+                            <field name="expected_price" string="Expected Price"/>
+                            <field name="selling_price" string="Selling Price"/>
+                            <field name="best_offer" string="Best Offer"/>
                         </group>
                     </group>
                     <!-- Tab -->
                     <notebook>
                         <page string="Description">
                             <group>
-                                <field name="description" string="Description" />
-                                <field name="bedrooms" string="Bedrooms" />
-                                <field name="living_area" string="Living Area" />
-                                <field name="facades" string="Facades" />
+                                <field name="description" string="Description"/>
+                                <field name="bedrooms" string="Bedrooms"/>
+                                <field name="living_area" string="Living Area"/>
+                                <field name="facades" string="Facades"/>
                                 <field name="garage" string="Garage" widget="boolean"/>
                                 <field name="garden" string="Garden" widget="boolean"/>
-                                <field name="garden_area" string="Garden Area" />
-                                <field name="garden_orientation" string="Garden Orientation" />
-                                <field name="total_area" string="Total Area" />
+                                <field name="garden_area" string="Garden Area"/>
+                                <field name="garden_orientation" string="Garden Orientation"/>
+                                <field name="total_area" string="Total Area"/>
                             </group>
                         </page>
 
@@ -144,8 +156,8 @@
 
                         <page string="Other Info">
                             <group>
-                                <field name="buyer_id" string="Buyer" />
-                                <field name="salesman_id" string="Salesman" />
+                                <field name="buyer_id" string="Buyer"/>
+                                <field name="salesman_id" string="Salesman"/>
                             </group>
                         </page>
                     </notebook>
