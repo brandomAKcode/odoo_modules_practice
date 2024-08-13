@@ -35,6 +35,15 @@
         <field name="view_mode">tree,form</field>
     </record>
 
+    <!-- Action to type > offer -->
+    <record id="real_estate_property_offer_filter_action" model="ir.actions.act_window">
+        <field name="name">Offers of type</field>
+        <field name="res_model">real_estate.property.offer</field>
+        <field name="view_mode">tree,form</field>
+        <field name="domain">[('type_id', '=', context.get('type_id'))]</field>
+        <field name="context">{'default_event_id': active_id}</field>
+    </record>
+
     <!-- This menu show in top bar, menu connect action and action to model -->
     <menuitem id="real_estate_property_menu" name="Real Estate">
         <menuitem id="real_estate_property_first_level_menu" name="Properties">
@@ -57,19 +66,26 @@
             <search string="Delivery Carrier">
                 <field name="name" string="Property"/>
                 <field name="postcode" string="Postcode"/>
-                <filter string="Low price" name="inactive" domain="[('expected_price', '&lt;', 101)]"/>
+                <field name="living_area" string="Living Area" filter_domain="[('living_area', '&gt;=', self)]"/>
+                <filter name="expected_price" string="Low price" domain="[('expected_price', '&lt;', 101)]"/>
+                <filter name="status" string="Available" domain="[('status', '=', 'available')]"/>
+                <filter name="status" string="Sold" domain="[('status', '=', 'sold')]"/>
+                <filter name="status" string="Canceled" domain="[('status', '=', 'canceled')]"/>
             </search>
         </field>
     </record>
 
     <!-- Custom tree view real_estate.property -->
-    <record id="real_estate_view_tree" model="ir.ui.view">
+    <record id="real_estate_property_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.tree</field>
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
-            <tree string="List of Properties">
+            <tree string="List of Properties" decoration-success="status=='sold'"
+                  decoration-danger="status=='canceled'">
                 <field name="name" string="Property"/>
+                <field name="status"/>
                 <field name="type_id" string="Type"/>
+                <field name="tag_ids" string="Tags" widget="many2many_tags" options="{'color_field': 'color'}"/>
                 <field name="postcode" string="Postcode"/>
                 <field name="bedrooms" string="Bedrooms"/>
                 <field name="living_area" string="Living Area"/>
@@ -80,25 +96,39 @@
         </field>
     </record>
 
+    <!-- Custom tree view real_estate.property.type -->
+    <record id="real_estate_property_type_view_tree" model="ir.ui.view">
+        <field name="name">real_estate.property.type.tree</field>
+        <field name="model">real_estate.property.type</field>
+        <field name="arch" type="xml">
+            <tree string="List of Properties">
+                <field name="sequence" string="Sequence" widget="handle"/>
+                <field name="name" string="Type"/>
+            </tree>
+        </field>
+    </record>
+
     <!-- Custom tree view real_estate.property.offer -->
     <record id="real_estate_property_offer_view_tree" model="ir.ui.view">
         <field name="name">real_estate.property.offer.tree</field>
         <field name="model">real_estate.property.offer</field>
         <field name="arch" type="xml">
-            <tree string="List of Properties">
+            <tree string="List of Properties" decoration-success="status=='accepted'"
+                  decoration-danger="status=='refused'" editable="top">
                 <field name="property_id" string="Property"/>
                 <field name="price" string="Price"/>
                 <field name="validity" string="Validity"/>
                 <field name="date_created" string="Date Created"/>
                 <field name="date_deadline" string="Date Expired"/>
                 <field name="status" string="Status"/>
+                <field name="type_id" string="Type Property"/>
                 <button name="action_accept_offer" type="object" icon="fa-check" title="Accept"/>
                 <button name="action_refuse_offer" type="object" icon="fa-times" title="Refuse"/>
             </tree>
         </field>
     </record>
 
-    <!-- Property Form -->
+    <!-- real_estate.property Form -->
     <record id="real_estate_view_form" model="ir.ui.view">
         <field name="name">real_estate.property.form</field>
         <field name="model">real_estate.property</field>
@@ -113,13 +143,15 @@
                         <i class="fa fa-ban mx-2" aria-label="Canceled"/>
                         CANCELED
                     </button>
+                    <field name="status" widget="statusbar" statusbar_visible="available,canceled,sold"/>
                 </header>
                 <sheet>
                     <h1>
                         <field name="name" nolabel="1"/>
                     </h1>
                     <group>
-                        <field name="tag_ids" widget="many2many_tags" string="Tags"/>
+                        <field name="tag_ids" widget="many2many_tags" string="Tags" options="{'color_field': 'color',
+                        'no_create_edit': True}"/>
                     </group>
                     <group>
                         <group>
@@ -144,8 +176,8 @@
                                 <field name="facades" string="Facades"/>
                                 <field name="garage" string="Garage" widget="boolean"/>
                                 <field name="garden" string="Garden" widget="boolean"/>
-                                <field name="garden_area" string="Garden Area"/>
-                                <field name="garden_orientation" string="Garden Orientation"/>
+                                <field name="garden_area" string="Garden Area" invisible="garden == 0"/>
+                                <field name="garden_orientation" string="Garden Orientation" invisible="garden == 0"/>
                                 <field name="total_area" string="Total Area"/>
                             </group>
                         </page>
@@ -159,6 +191,42 @@
                                 <field name="buyer_id" string="Buyer"/>
                                 <field name="salesman_id" string="Salesman"/>
                             </group>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- real_estate.property.type Form -->
+    <record id="real_estate_type_view_form" model="ir.ui.view">
+        <field name="name">real_estate.property.type.form</field>
+        <field name="model">real_estate.property.type</field>
+        <field name="arch" type="xml">
+            <form string="Property Type">
+                <sheet>
+                    <div class="oe_button_box" name="button_box">
+                        <button name="%(real_estate.real_estate_property_offer_filter_action)d"
+                                type="action"
+                                context="{'type_id': name}"
+                                class="oe_stat_button"
+                                icon="fa-money"
+                                help="Offers">
+                            <field name="offer_count"/>#Offers
+                        </button>
+                    </div>
+                    <h1>
+                        <field name="name" string="Type" nolabel="1"/>
+                    </h1>
+                    <notebook>
+                        <page string="Properties">
+                            <field name="property_id">
+                                <tree>
+                                    <field name="name" string="Property"/>
+                                    <field name="expected_price" string="Expected Price"/>
+                                    <field name="status" string="Status"/>
+                                </tree>
+                            </field>
                         </page>
                     </notebook>
                 </sheet>

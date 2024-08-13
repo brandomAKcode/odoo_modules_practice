@@ -6,6 +6,7 @@ from odoo.exceptions import UserError, ValidationError
 class EstateProperty(models.Model):
     _name = 'real_estate.property'
     _description = 'Properties'
+    _order = 'id desc'
 
     name = fields.Char(required=True)
     description = fields.Text()
@@ -78,20 +79,32 @@ class EstateProperty(models.Model):
 class EstatePropertyType(models.Model):
     _name = 'real_estate.property.type'
     _description = 'Type of properties'
+    _order = 'name'
 
+    sequence = fields.Integer(default=1)
     name = fields.Char(required=True)
+    property_id = fields.One2many(comodel_name='real_estate.property', inverse_name='type_id')
+    offer_ids = fields.One2many(comodel_name='real_estate.property.offer', inverse_name='type_id')
+    offer_count = fields.Integer(compute="_compute_offer_count")
+
+    def _compute_offer_count(self):
+        for record in self:
+            record.offer_count = len(record.offer_ids)
 
 
 class EstatePropertyTag(models.Model):
     _name = 'real_estate.property.tag'
     _description = 'Tag of properties'
+    _order = 'name'
 
     name = fields.Char(required=True)
+    color = fields.Integer()
 
 
 class EstatePropertyOffer(models.Model):
     _name = 'real_estate.property.offer'
     _description = 'Offers'
+    _order = 'price desc'
 
     price = fields.Float()
     status = fields.Selection([
@@ -104,6 +117,7 @@ class EstatePropertyOffer(models.Model):
     date_deadline = fields.Date(compute='_compute_date_deadline', inverse='_inverse_date_deadline', readonly=False)
     buyer_id = fields.Many2one(comodel_name='res.partner', ondelete='cascade')
     property_id = fields.Many2one(comodel_name='real_estate.property', ondelete='cascade')
+    type_id = fields.Many2one(related='property_id.type_id', comodel_name='real_estate.property.type', ondelete='set null')
 
     _sql_constraints = [
         ('check_price', 'CHECK(price >= 0)', 'The selling price cannot be less than 0.')
@@ -112,7 +126,7 @@ class EstatePropertyOffer(models.Model):
     @api.constrains('price')
     def _check_price(self):
         for record in self:
-            if record.price < (record.property_id.selling_price*0.90):
+            if record.price < (record.property_id.expected_price*0.90):
                 raise ValidationError('The price cannot be less than 90% of the published price.')
 
     @api.depends('validity')
