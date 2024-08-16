@@ -242,11 +242,11 @@
         <field name="arch" type="xml">
             <!-- find field description and add the field
                  new_field after it -->
-            <page string="Account Security" position="after">
-                <page string="Properties" position="after">
+            <xpath expr="//page[3]" position="after">
+                <page string="Properties">
                     <field name="property_ids"/>
                 </page>
-            </page>
+        </xpath>
         </field>
     </record>
 </odoo>
