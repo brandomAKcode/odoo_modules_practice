@@ -33,13 +33,13 @@ class EstateProperty(models.Model):
     ], string='Status of property', default='available')
     # relations
     type_id = fields.Many2one(comodel_name='real_estate.property.type', ondelete='set null')
-    buyer_id = fields.Many2one(comodel_name='res.partner', ondelete='set null')
+    buyer_id = fields.Many2one(comodel_name='res.partner', ondelete='cascade')
     salesman_id = fields.Many2one(comodel_name='res.users', ondelete='set null', default=lambda self: self.env.user)
-    tag_ids = fields.Many2many(comodel_name='real_estate.property.tag', ondelete="restrict")
-    offer_ids = fields.One2many(comodel_name='real_estate.property.offer', inverse_name="property_id")
+    tag_ids = fields.Many2many(comodel_name='real_estate.property.tag', ondelete='restrict')
+    offer_ids = fields.One2many(comodel_name='real_estate.property.offer', inverse_name='property_id')
     # computed field
-    total_area = fields.Float(compute="_compute_total_area")
-    best_offer = fields.Float(compute="_compute_best_offer")
+    total_area = fields.Float(compute='_compute_total_area')
+    best_offer = fields.Float(compute='_compute_best_offer')
 
     _sql_constraints = [
         ('check_selling_price', 'CHECK(selling_price >= 0)', 'The selling price cannot be less than 0.'),
@@ -61,16 +61,22 @@ class EstateProperty(models.Model):
         if self.garden:
             self.garden_area = 10
 
+    @api.ondelete(at_uninstall=False)
+    def _unlink_except_property_sold(self):
+        """Method to prevent delete property with sold status"""
+        if any(record.status == 'sold' for record in self):
+            raise UserError('This property cannot be deleted because it has a sold status.')
+
     def action_sold(self):
         if self.status == 'canceled':
-            raise UserError("The property cannot be sold because it has been canceled.")
+            raise UserError('The property cannot be sold because it has been canceled.')
 
         self.status = 'sold'
         return True
 
     def action_canceled(self):
         if self.status == 'sold':
-            raise UserError("The property cannot be canceled as it has already been sold.")
+            raise UserError('The property cannot be canceled as it has already been sold.')
 
         self.status = 'canceled'
         return True
@@ -85,7 +91,7 @@ class EstatePropertyType(models.Model):
     name = fields.Char(required=True)
     property_id = fields.One2many(comodel_name='real_estate.property', inverse_name='type_id')
     offer_ids = fields.One2many(comodel_name='real_estate.property.offer', inverse_name='type_id')
-    offer_count = fields.Integer(compute="_compute_offer_count")
+    offer_count = fields.Integer(compute='_compute_offer_count')
 
     def _compute_offer_count(self):
         for record in self:
