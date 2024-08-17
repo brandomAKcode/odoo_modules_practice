@@ -2,7 +2,7 @@
 
 ## odoo modules practice
 
-This is a practice to learn the essential aspects of Odoo.
+This repository was created to have a reference for the creation of modules in Odoo. The views and modules were created even in a single file to have a quick reference.
 
 ### Observations
 
