@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 from odoo import fields, models, api
 from datetime import datetime, timedelta
 from odoo.exceptions import UserError, ValidationError
@@ -17,7 +18,7 @@ class EstateProperty(models.Model):
     bedrooms = fields.Integer()
     living_area = fields.Integer(default=0)
     facades = fields.Integer()
-    garage = fields.Integer(default=False)
+    garage = fields.Boolean(default=False)
     garden = fields.Boolean(default=False)
     garden_area = fields.Integer(default=0)
     garden_orientation = fields.Selection([
@@ -29,6 +30,7 @@ class EstateProperty(models.Model):
     status = fields.Selection([
         ('available', 'Available'),
         ('canceled', 'Canceled'),
+        ('offer_accepted', 'Offer Accepted'),
         ('sold', 'Sold')
     ], string='Status of property', default='available')
     # relations
@@ -151,7 +153,7 @@ class EstatePropertyOffer(models.Model):
             raise UserError('The offer status cannot be changed, as it may have already been sold or canceled')
 
         self.status = 'accepted'
-        self.property_id.status = 'sold'
+        self.property_id.status = 'offer_accepted'
         self.property_id.buyer_id = self.buyer_id
         self.property_id.selling_price = self.price
 

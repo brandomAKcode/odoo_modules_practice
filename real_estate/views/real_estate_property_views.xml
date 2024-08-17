@@ -117,6 +117,7 @@
                   decoration-danger="status=='refused'" editable="top">
                 <field name="property_id" string="Property"/>
                 <field name="price" string="Price"/>
+                <field name="buyer_id" string="Buyer"/>
                 <field name="validity" string="Validity"/>
                 <field name="date_created" string="Date Created"/>
                 <field name="date_deadline" string="Date Expired"/>
@@ -134,18 +135,19 @@
         <field name="model">real_estate.property</field>
         <field name="arch" type="xml">
             <form string="Property">
-                <header>
-                    <button name="action_sold" type="object" class="btn-success">
-                        <i class="fa fa-handshake-o mx-2" aria-label="Sold"/>
-                        SOLD
-                    </button>
-                    <button name="action_canceled" type="object" class="btn-danger">
-                        <i class="fa fa-ban mx-2" aria-label="Canceled"/>
-                        CANCELED
-                    </button>
-                    <field name="status" widget="statusbar" statusbar_visible="available,canceled,sold"/>
-                </header>
                 <sheet>
+                    <header invisible="status != 'offer_accepted'">
+                        <button name="action_sold" type="object" class="btn-success">
+                            <i class="fa fa-handshake-o mx-2" aria-label="Sold"/>
+                            SOLD
+                        </button>
+                        <button name="action_canceled" type="object" class="btn-danger">
+                            <i class="fa fa-ban mx-2" aria-label="Canceled"/>
+                            CANCELED
+                        </button>
+                        <field name="status" widget="statusbar" statusbar_visible="available,canceled,offer_accepted,sold"/>
+                    </header>
+                    <hr invisible="status != 'offer_accepted'"/>
                     <h1>
                         <field name="name" nolabel="1"/>
                     </h1>
@@ -242,11 +244,11 @@
         <field name="arch" type="xml">
             <!-- find field description and add the field
                  new_field after it -->
-            <xpath expr="//page[3]" position="after">
+            <xpath expr="//page[2]" position="after">
                 <page string="Properties">
                     <field name="property_ids"/>
                 </page>
-        </xpath>
+            </xpath>
         </field>
     </record>
 </odoo>
